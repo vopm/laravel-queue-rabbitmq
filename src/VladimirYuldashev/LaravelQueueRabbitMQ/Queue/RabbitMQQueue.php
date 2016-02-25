@@ -152,7 +152,7 @@ class RabbitMQQueue extends Queue implements QueueContract
 		if ($this->declareExchange) {
 			// declare exchange
 			$this->channel->exchange_declare(
-				$exchange,
+				$exchange ,
 				$this->configExchange['type'],
 				$this->configExchange['passive'],
 				$this->configExchange['durable'],
