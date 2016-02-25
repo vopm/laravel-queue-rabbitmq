@@ -37,7 +37,7 @@ class RabbitMQQueue extends Queue implements QueueContract
 		$this->declareExchange = $config['exchange_declare'];
 		$this->declareBindQueue = $config['queue_declare_bind'];
 
-		$this->channel = $this->getChannel();
+		$this->channel = $this->connection->channel();
 	}
 
 	/**
@@ -136,9 +136,9 @@ class RabbitMQQueue extends Queue implements QueueContract
 	/**
 	 * @return AMQPChannel
 	 */
-	private function getChannel()
+	public function getChannel()
 	{
-		return $this->connection->channel();
+		return $this->channel;
 	}
 
 	/**
