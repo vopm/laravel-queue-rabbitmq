@@ -72,11 +72,13 @@ class RabbitMQQueue extends Queue implements QueueContract
 			$queue = $this->declareDelayedQueue($queue, $options['delay']);
 		}
 
-		// push job to a queue
-		$message = new AMQPMessage($payload, [
-			'Content-Type'  => 'application/json',
-			'delivery_mode' => 2,
-		]);
+        $defaultProperties = [
+            'content_type' => 'application/json',
+            'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT,
+        ];
+
+        // push job to a queue
+        $message = new AMQPMessage($payload, $defaultProperties + $options);
 
 		// push task to a queue
 		$this->channel->basic_publish($message, $exchange, $queue);
@@ -218,4 +220,31 @@ class RabbitMQQueue extends Queue implements QueueContract
 		return $name;
 	}
 
+    /**
+     * Consume
+     *
+     * @param string $name
+     * @param \Closure $callback
+     */
+    public function consume($name, \Closure $callback)
+    {
+        $name = $this->getQueueName($name);
+        $this->channel->basic_consume($name, '', false, false, false, false, function (AMQPMessage $message) use ($callback) {
+            $deliveryTag = $message->delivery_info['delivery_tag'];
+            /** @var AMQPChannel $channel */
+            $channel = $message->delivery_info['channel'];
+
+            $result = call_user_func($callback, $message);
+
+            if ($result === true) {
+                $channel->basic_ack($deliveryTag);
+            } else {
+                $channel->basic_nack($deliveryTag);
+            }
+        });
+
+        while (count($this->channel->callbacks)) {
+            $this->channel->wait();
+        }
+    }
 }
