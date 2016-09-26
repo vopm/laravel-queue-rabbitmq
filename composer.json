@@ -1,6 +1,6 @@
 {
   "name": "ramilexe/laravel-queue-rabbitmq",
-  "version": "5.7",
+  "version": "5.8",
   "description": "RabbitMQ driver for Laravel Queue",
   "license": "MIT",
   "authors": [
