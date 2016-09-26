@@ -247,4 +247,15 @@ class RabbitMQQueue extends Queue implements QueueContract
             $this->channel->wait();
         }
     }
+	
+    /**
+     * Get the size of the queue.
+     *
+     * @param  string $queue
+     * @return int
+     */
+    public function size($queue = null)
+    {
+        // TODO: Implement size() method.
+    }
 }
