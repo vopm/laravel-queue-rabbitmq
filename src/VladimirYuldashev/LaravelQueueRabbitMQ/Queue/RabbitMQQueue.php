@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\Queue as QueueContract;
 use Illuminate\Queue\Queue;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
 use VladimirYuldashev\LaravelQueueRabbitMQ\Queue\Jobs\RabbitMQJob;
@@ -25,10 +26,10 @@ class RabbitMQQueue extends Queue implements QueueContract
 	protected $configExchange;
 
 	/**
-	 * @param AMQPConnection $amqpConnection
+	 * @param AMQPStreamConnection $amqpConnection
 	 * @param array          $config
 	 */
-	public function __construct(AMQPConnection $amqpConnection, $config)
+	public function __construct(AMQPStreamConnection $amqpConnection, $config)
 	{
 		$this->connection = $amqpConnection;
 		$this->defaultQueue = $config['queue'];
@@ -39,6 +40,17 @@ class RabbitMQQueue extends Queue implements QueueContract
 
 		$this->channel = $this->getChannel();
 	}
+
+    /**
+     * Get the size of the queue.
+     *
+     * @param  string  $queue
+     * @return int
+     */
+    public function size($queue = null)
+    {
+        return 0;
+    }
 
 	/**
 	 * Push a new job onto the queue.
