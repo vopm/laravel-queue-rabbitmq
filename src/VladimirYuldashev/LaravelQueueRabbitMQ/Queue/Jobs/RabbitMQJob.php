@@ -38,7 +38,7 @@ class RabbitMQJob extends Job implements JobContract
      */
     public function fire()
     {
-        $this->resolveAndFire(json_decode($this->message->body, true));
+        parent::fire();
     }
 
     /**
